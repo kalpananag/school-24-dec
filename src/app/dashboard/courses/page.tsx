@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { CrudTable } from '@/components/crud-table'
+
 import { Course } from '@/types/schema'
+import { CrudTable } from '@/components/crud-table'
 //import { supabase } from '@/lib/supabase'
 //import { supabase } from '../../../lib/supabase'
 import { createClient } from '@supabase/supabase-js'
@@ -13,6 +14,8 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 // Initialize the Supabase client
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+
 const sampleCourses: Course[] = [
   {
     id: '1',
