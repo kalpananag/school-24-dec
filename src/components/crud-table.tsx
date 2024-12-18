@@ -65,7 +65,8 @@ export function CrudTable<T extends { id: string }>({
                 <div key={String(column.key)}>
                   <Input
                     placeholder={column.label}
-                    value={formData[column.key] as string || ''}
+                    value={String(formData[column.key] ?? '')}
+                    //value={formData[column.key] as string || ''}
                     onChange={(e) =>
                       setFormData({ ...formData, [column.key]: e.target.value })
                     }
@@ -129,7 +130,9 @@ export function CrudTable<T extends { id: string }>({
               <div key={String(column.key)}>
                 <Input
                   placeholder={column.label}
-                  value={formData[column.key] as string || ''}
+                  value={String(formData[column.key] ?? '')}
+                  //value={typeof formData[column.key] === 'string' ? formData[column.key] : ''} 
+                  //value={formData[column.key] as string || ''}
                   onChange={(e) =>
                     setFormData({ ...formData, [column.key]: e.target.value })
                   }
