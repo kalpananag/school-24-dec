@@ -62,7 +62,7 @@ export default function CoursesPage() {
     }
   }
 
-  const columns = [
+  const columns1 = [
     { key: 'name', label: 'Course Name' },
     { key: 'description', label: 'Description' },
     { key: 'credits', label: 'Credits' },
@@ -118,7 +118,7 @@ export default function CoursesPage() {
       <h1 className="text-4xl font-bold text-white mb-8">Courses Management</h1>
       <CrudTable
         data={courses}
-        columns={columns}
+        columns={columns1}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}

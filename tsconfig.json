@@ -3,6 +3,7 @@
     "baseUrl": "./",         // Set the base URL for resolving non-relative paths
     "paths": {
       "@/*": ["src/*"]       // Resolve @/ to the src/ directory
+
     },
     "target": "ES2017",
     "lib": [
@@ -12,7 +13,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
