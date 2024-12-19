@@ -9,7 +9,7 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   throw new Error("Supabase URL or anonymous key is not defined.");
 }
 // Initialize the Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 export const auth = {
   signInWithPassword: async ({ email, password }: { email: string; password: string }) => {
