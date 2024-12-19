@@ -3,10 +3,10 @@ import { Users, GraduationCap, UserCog, BookOpen } from 'lucide-react'
 
 export function Sidebar() {
   const navItems = [
-    { href: '/dashboard/students', icon: Users, label: 'Students' },
-    { href: '/dashboard/courses', icon: BookOpen, label: 'Courses' },
-    { href: '/dashboard/teachers', icon: GraduationCap, label: 'Teachers' },
-    { href: '/dashboard/staff', icon: UserCog, label: 'Staff' },
+    { href: '/maindashboard/students', icon: Users, label: 'Students' },
+    { href: '/maindashboard/courses', icon: BookOpen, label: 'Courses' },
+    { href: '/maindashboard/teachers', icon: GraduationCap, label: 'Teachers' },
+    { href: '/maindashboard/staff', icon: UserCog, label: 'Staff' },
   ]
 
   return (
