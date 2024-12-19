@@ -1,53 +1,45 @@
  'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router' // Ensure this import is correct
-import { signIn } from '@/lib/supabase'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { supabase } from '@/lib/supabase'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';  // Ensure this import is correct
+import { signIn } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/lib/supabase';
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [loggedIn, setLoggedIn] = useState(false)  // New state to track login status
+  const router = useRouter();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     // Call your sign-in method, passing only the necessary info
-    const { data, error } = await signIn(email, password)
-
-    // Clear the password state immediately after the request is sent
-    setPassword('')
+    const { data, error } = await signIn(email, password);
 
     if (error) {
-      setError(error.message)
-      setLoading(false)
-      return
+      setError(error?.message || 'An unexpected error occurred');
+    } else {
+      setLoggedIn(true); // Update login state
     }
 
-    if (data) {
-      console.log('Login successful')
-      setLoggedIn(true) // Update login state
-    } else {
-      setError('Login failed. Please try again.')
-      setLoading(false)
-    }
-  }
+    // Clear the password after login is finished
+    setPassword('');
+    setLoading(false);
+  };
 
   // Optional: Check for session after login success
   useEffect(() => {
     if (loggedIn) {
-      // Redirect only when login is successful
-      router.push('/dashboard')  // This ensures the redirect happens after successful login
+      router.push('/dashboard');  // Ensure redirect after successful login
     }
-  }, [loggedIn, router])  // Watch for 'loggedIn' state
+  }, [loggedIn, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -83,8 +75,9 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
+
 
  
 // import { useState } from 'react'
