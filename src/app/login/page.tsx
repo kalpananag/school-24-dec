@@ -37,7 +37,7 @@ export default function LoginPage() {
   // Optional: Check for session after login success
   useEffect(() => {
     if (loggedIn) {
-      router.push('/newdashboard');  // Ensure redirect after successful login
+      router.push('/maindashboard');  // Ensure redirect after successful login
     }
   }, [loggedIn, router]);
 
