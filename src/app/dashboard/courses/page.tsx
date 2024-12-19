@@ -49,7 +49,7 @@ const sampleCourses: Course[] = [
 ]
 
 export default function CoursesPage() {
-  const [courses, setCourses] = useState<Course[]>(sampleCourses)
+  const [courses, setCourses] = useState<Course[]>([]);//sampleCourses)
 
   useEffect(() => {
     loadCourses()
@@ -67,7 +67,7 @@ export default function CoursesPage() {
     }
   }
 
-  const columns1 = [
+  const columns = [
     { key: 'name', label: 'Course Name' },
     { key: 'description', label: 'Description' },
     { key: 'credits', label: 'Credits' },
@@ -121,9 +121,9 @@ export default function CoursesPage() {
   return (
     <div className="container mx-auto py-6">
       <h1 className="text-4xl font-bold text-white mb-8">Courses Management</h1>
-      <CrudTable
+      <CrudTable <Course>
         data={courses}
-        columns={columns1}
+        columns={columns}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={handleDelete}
