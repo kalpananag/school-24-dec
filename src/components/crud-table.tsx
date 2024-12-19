@@ -13,13 +13,18 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 
+export interface Column<T> {
+  key: keyof T
+  label: string
+}
 
 interface CrudTableProps<T> {
   data: T[];
-  columns: {
-    key: keyof T;
-    label: string
-  }[];
+  columns: Column<T>[];
+  // columns: {
+  //   key: keyof T;
+  //   label: string
+  // }[];
   onAdd: (item: Partial<T>) => Promise<void>;
   onEdit: (id: string, item: Partial<T>) => Promise<void>;
   onDelete: (id: string) => Promise<void>;

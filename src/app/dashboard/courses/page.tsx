@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 import { Course } from '@/types/schema'
-import { CrudTable } from '@/components/crud-table'
+import { CrudTable,Column } from '@/components/crud-table'
 //import { supabase } from '@/lib/supabase'
 //import { supabase } from '../../../lib/supabase'
 import { createClient } from '@supabase/supabase-js'
@@ -67,7 +67,8 @@ export default function CoursesPage() {
     }
   }
 
-  const columns = [
+
+  const columns: Column<Course>[] = [ 
     { key: 'name', label: 'Course Name' },
     { key: 'description', label: 'Description' },
     { key: 'credits', label: 'Credits' },
@@ -91,7 +92,7 @@ export default function CoursesPage() {
   async function handleEdit(id: string, course: Partial<Course>) {
     try {
       const { error } = await supabase
-        .from('courses')
+        .from('course')
         .update(course)
         .eq('id', id)
       if (error) throw error
@@ -106,7 +107,7 @@ export default function CoursesPage() {
   async function handleDelete(id: string) {
     try {
       const { error } = await supabase
-        .from('courses')
+        .from('course')
         .delete()
         .eq('id', id)
       if (error) throw error
