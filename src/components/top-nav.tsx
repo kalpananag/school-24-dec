@@ -45,7 +45,7 @@ const navItems = [
   },
   {
     title: 'DASHBOARD',
-    href: '/dashboard',
+    href: '/maindashboard',
   },
 ]
 
@@ -59,18 +59,18 @@ export function TopNav() {
               {navItems.map((item) => (
                 <NavigationMenuItem key={item.title}>
                   <Link href={item.href} legacyBehavior passHref>
-                    <NavigationMenuLink
+                  <NavigationMenuLink
                       className={cn(
-                        "group inline-flex h-10 w-max items-center justify-center px-4 text-xs font-medium tracking-wider transition-colors hover:bg-gray-100",
+                        "group inline-flex items-center justify-center px-6 py-3 text-sm font-medium text-gray-800 transition-colors duration-200 ease-in-out rounded-lg hover:bg-orange-500 hover:text-white"
                       )}
                     >
                       {item.title}
-                    </NavigationMenuLink>
+                  </NavigationMenuLink>
                   </Link>
-                </NavigationMenuItem>
+               </NavigationMenuItem>
               ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+              </NavigationMenuList>
+              </NavigationMenu>
 
           <div className="flex items-center">
             <button className="flex items-center px-4 text-xs font-medium tracking-wider text-gray-600 hover:text-gray-900">
