@@ -23,7 +23,7 @@ export function Header({ userName }: HeaderProps) {
     <header className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-md py-4 sticky top-0 z-48">
       <div className="container mx-auto flex justify-between items-center px-6 sm:px-8">
         <Link href="/dashboard" className="text-3xl font-bold text-white hover:text-gray-200 transition duration-300">
-          School Management
+          Shri Vishwakarma Management
         </Link>
         <div className="flex items-center space-x-6">
           {userName && (

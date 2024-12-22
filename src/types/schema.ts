@@ -22,8 +22,8 @@ export interface Teacher {
   last_name: string
   email: string
   department: string
-  courses: string[]
-}
+  
+  }
 
 export interface Staff {
   id: string
@@ -34,3 +34,10 @@ export interface Staff {
   department: string
 }
 
+export interface Address {
+  street: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  phone_number: string;
+}

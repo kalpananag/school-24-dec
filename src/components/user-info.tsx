@@ -13,16 +13,16 @@ interface UserInfoProps {
 
 export function UserInfo({ user }: UserInfoProps) {
   return (
-    <Card className="mb-6 bg-gradient-to-r from-teal-500 to-blue-500 shadow-xl rounded-lg hover:shadow-2xl transition-shadow duration-300">
+    <Card className="mb-1 bg-gradient-to-r from-teal-500 to-blue-500 shadow-xl rounded-lg hover:shadow-2xl transition-shadow duration-300">
       <CardHeader>
-        <CardTitle className="text-white text-xl font-semibold">Welcome, {user.name}</CardTitle>
+        <CardTitle className="text-white text-xl font-semibold">Welcome Admin User {user.name}</CardTitle>
       </CardHeader>
-      <CardContent>
+      {/* <CardContent>
         <div className="flex space-x-8 text-white text-lg">
           <p><strong>Email:</strong> {user.email}</p>
           <p><strong>Role:</strong> {user.role}</p>
         </div>
-      </CardContent>
+      </CardContent> */}
     </Card>
   )
 }

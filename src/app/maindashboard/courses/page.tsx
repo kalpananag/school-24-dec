@@ -175,6 +175,8 @@ export default function CoursesPage() {
         {/* Render loading state */}
         {renderLoading()}
 
+       
+
         {/* Card for Course List */}
         <div className="bg-white shadow-md rounded-lg overflow-hidden">
           <CrudTable<Course>
@@ -183,6 +185,9 @@ export default function CoursesPage() {
             onAdd={handleAdd}
             onEdit={handleEdit}
             onDelete={handleDelete}
+            addTitle="Add New Course"  //{/* Title for Add dialog */}
+            editTitle="Update Course"  //{/* Title for Edit dialog */}
+            entityType="course"  // Set entityType as "teacher" for TeacherPage
           />
         </div>
 

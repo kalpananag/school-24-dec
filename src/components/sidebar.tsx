@@ -18,7 +18,7 @@ export function Sidebar() {
     >
       {/* Header for toggling sidebar */}
       <div className="flex justify-between items-center mb-8">
-        <div className="text-gray-800 text-xl font-semibold">{isOpen ? 'School Management' : ''}</div>
+        <div className="text-gray-800 text-xl font-semibold">{isOpen ? '' : ''}</div>
         <button
           className="text-gray-700"
           onClick={() => setIsOpen(!isOpen)}
@@ -47,7 +47,7 @@ export function Sidebar() {
                   className="absolute right-0 top-1/2 transform -translate-y-1/2 text-gray-600"
                   onClick={() => setIsOpen(!isOpen)}
                 >
-                  <span className="text-lg">⏳</span>
+                  {/* <span className="text-lg">⏳</span> */}
                 </button>
               )}
             </li>
