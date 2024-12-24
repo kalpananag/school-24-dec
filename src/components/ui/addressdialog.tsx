@@ -1,10 +1,14 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-//import { Address } from '@/types/schema';  // Import Address interface
-import { insertTeacherAddress, getTeacherAddresses } from '@/lib/address-operations'; // Ensure these functions are typed properly
-
+import SuccessMessage from '@/components/ui/successMessage'
+import {
+  insertAddress,
+  getAddresses,
+} from '@/lib/address-operations'; // Update function names for generalized address operations
+import {Tooltip} from 'react-tooltip';
 // Define the AddressFormData type for the form input fields
 interface AddressFormData {
   street: string;
@@ -19,7 +23,7 @@ interface AddressDialogProps {
   open: boolean;
   onClose: () => void;
   itemId: string | null;
-  entityType: 'teacher' | 'student' | 'staff' | 'course'; // Extendable if needed
+  entityType: 'teacher' | 'student' | 'staff' | 'course' ; // Extendable if needed
 }
 
 // Define the Address structure based on your schema
@@ -30,52 +34,44 @@ interface Address {
   state: string;
   zip_code: string;
   phone_number: string;
-  address_type: 'home' | 'office' | 'other'; // Fixed type to restrict values to 'home', 'office', or 'other'
+  address_type: 'home' | 'temp' | 'other'; // Fixed type to restrict values to 'home', 'office', or 'other'
 }
 
-const AddressDialog: React.FC<AddressDialogProps> = ({
-  open,
-  onClose,
-  itemId,
-  entityType,
-}) => {
-  const [selectedTab, setSelectedTab] = useState<'home' | 'office' | 'other'>('home');
+const AddressDialog: React.FC<AddressDialogProps> = ({ open, onClose, itemId, entityType }) => {
+  const [selectedTab, setSelectedTab] = useState<'home' | 'temp' | 'other'>('home');
 
-  // State to hold the address data for each tab
   const [addressData, setAddressData] = useState<{
     home: AddressFormData;
-    office: AddressFormData;
+    temp: AddressFormData;
     other: AddressFormData;
   }>({
     home: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
-    office: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
+    temp: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
     other: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
   });
+
+  const tabDescriptions = {
+    home: 'Manage home, student lives with parents.',
+    temp: 'Manage temp, student at their relative/guardians location',
+    other: 'Other, student on field trip or vacations',
+  };
 
   // Fetch addresses when itemId changes
   useEffect(() => {
     if (itemId) {
       const fetchAddresses = async () => {
         try {
-          const addresses = await getTeacherAddresses(itemId);  // Fetch the addresses from Supabase
+          const addresses = await getAddresses(itemId, entityType); // Fetch addresses based on entity type
 
           if (addresses && addresses.length > 0) {
-            // Initialize the address data structure for home, office, and other with empty fields
-            const newAddressData: {
-              home: AddressFormData;
-              office: AddressFormData;
-              other: AddressFormData;
-            } = {
+            const newAddressData = {
               home: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
-              office: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
+              temp: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
               other: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
             };
 
-            // Iterate over the fetched addresses and populate the correct type
             addresses.forEach((address: Address) => {
-              const addressType = address.address_type.toLowerCase() as 'home' | 'office' | 'other'; // Normalize address type
-
-              // Only map valid types (home, office, or other)
+              const addressType = address.address_type.toLowerCase() as 'home' | 'temp' | 'other';
               if (addressType in newAddressData) {
                 newAddressData[addressType] = {
                   street: address.street || '',
@@ -87,13 +83,12 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
               }
             });
 
-            // Update the state with the mapped address data
             setAddressData(newAddressData);
           } else {
-            console.log('No addresses found or the addresses are null.');
+            console.log('No addresses found.');
             setAddressData({
               home: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
-              office: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
+              temp: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
               other: { street: '', city: '', state: '', zip_code: '', phone_number: '' },
             });
           }
@@ -104,7 +99,7 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
 
       fetchAddresses();
     }
-  }, [itemId]);
+  }, [itemId, entityType]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -118,7 +113,7 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
   };
 
   const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
 
     if (!itemId) {
       alert('Item ID is required to save the address.');
@@ -126,13 +121,14 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
     }
 
     try {
-      const addressToSave = addressData[selectedTab]; // Use the address data for the selected tab
-      // Call the insertTeacherAddress function to save the address for the specific entity
+      const addressToSave = addressData[selectedTab];
       console.log('Address data to save:', addressToSave);
-      console.log('selectedTab data to save:', selectedTab);
-      await insertTeacherAddress(itemId, addressToSave, selectedTab);
-      alert(`Address saved successfully for ${entityType} ${itemId}`);
-      onClose(); // Close the dialog after saving
+      await insertAddress(itemId, entityType,addressToSave, selectedTab); // Save based on entity type
+      console.log(`Address saved successfully for ${entityType} ${itemId}`); 
+      //alert(`Address saved successfully for ${entityType} ${itemId}`);
+      const message = `Address saved successfully for ${entityType} ${itemId}`;
+      <SuccessMessage message={message} /> 
+      onClose();
     } catch (error) {
       console.error('Error saving address:', error);
       alert('Failed to save address.');
@@ -141,45 +137,20 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
 
   const renderFormContent = () => {
     const addressPrefix = selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1);
-    const currentAddress = addressData[selectedTab]; // Get the address data for the selected tab
+    const currentAddress = addressData[selectedTab];
 
     return (
       <div className="space-y-4">
-        <Input
-          placeholder={`${addressPrefix} Street`}
-          name="street"
-          value={currentAddress.street}
-          onChange={handleInputChange}
-          className="mb-4 w-full"
-        />
-        <Input
-          placeholder={`${addressPrefix} City`}
-          name="city"
-          value={currentAddress.city}
-          onChange={handleInputChange}
-          className="mb-4 w-full"
-        />
-        <Input
-          placeholder={`${addressPrefix} State`}
-          name="state"
-          value={currentAddress.state}
-          onChange={handleInputChange}
-          className="mb-4 w-full"
-        />
-        <Input
-          placeholder={`${addressPrefix} Zip Code`}
-          name="zip_code"
-          value={currentAddress.zip_code}
-          onChange={handleInputChange}
-          className="mb-4 w-full"
-        />
-        <Input
-          placeholder={`${addressPrefix} Phone Number`}
-          name="phone_number"
-          value={currentAddress.phone_number}
-          onChange={handleInputChange}
-          className="mb-4 w-full"
-        />
+        {['street', 'city', 'state', 'zip_code', 'phone_number'].map((field) => (
+          <Input
+            key={field}
+            placeholder={`${addressPrefix} ${field.replace('_', ' ')}`}
+            name={field}
+            value={currentAddress[field as keyof AddressFormData]}
+            onChange={handleInputChange}
+            className="mb-4 w-full"
+          />
+        ))}
       </div>
     );
   };
@@ -191,31 +162,37 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
           <DialogTitle>Manage Addresses for {entityType.charAt(0).toUpperCase() + entityType.slice(1)}</DialogTitle>
         </DialogHeader>
 
-        <div className="tabs">
-          {/* Tab Buttons */}
+        {/* <div className="tabs">
           <div className="flex space-x-4 mb-4">
-            <Button
-              variant={selectedTab === 'home' ? 'default' : 'ghost'}
-              onClick={() => setSelectedTab('home')}
-            >
-              Home
-            </Button>
-            <Button
-              variant={selectedTab === 'office' ? 'default' : 'ghost'}
-              onClick={() => setSelectedTab('office')}
-            >
-              Office
-            </Button>
-            <Button
-              variant={selectedTab === 'other' ? 'default' : 'ghost'}
-              onClick={() => setSelectedTab('other')}
-            >
-              Other
-            </Button>
+            {['home', 'temp', 'other'].map((tab) => (
+              <Button
+                key={tab}
+                variant={selectedTab === tab ? 'default' : 'ghost'}
+                onClick={() => setSelectedTab(tab as 'home' | 'temp' | 'other')}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </Button>
+            ))}
+          </div>
+        </div> */}
+       <div className="tabs">
+          <div className="flex space-x-4 mb-4">
+            {['home', 'temp', 'other'].map((tab) => (
+              <div key={tab}>
+                <Button
+                  id={`tooltip-${tab}`} // Unique ID for each tab
+                  variant={selectedTab === tab ? 'default' : 'ghost'}
+                  onClick={() => setSelectedTab(tab as 'home' | 'temp' | 'other')}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </Button>
+                {/* Tooltip Component */}
+                <Tooltip anchorId={`tooltip-${tab}`} content={tabDescriptions[tab as 'home' | 'temp' | 'other']} place="top" />
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Updated form with onSubmit handler */}
         <form className="space-y-4 w-full" onSubmit={handleSave}>
           {renderFormContent()}
 
@@ -223,7 +200,7 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
             <Button variant="ghost" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit">Save Address</Button> {/* Button type set to "submit" */}
+            <Button type="submit">Save Address</Button>
           </div>
         </form>
       </DialogContent>
@@ -232,7 +209,6 @@ const AddressDialog: React.FC<AddressDialogProps> = ({
 };
 
 export default AddressDialog;
-
 
 
 

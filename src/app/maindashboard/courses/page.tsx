@@ -3,18 +3,18 @@
 import { useState, useEffect } from 'react'
 import { Course } from '@/types/schema'
 import { CrudTable, Column } from '@/components/crud-table'
-import { createClient } from '@supabase/supabase-js'
-
+//import { createClient } from '@supabase/supabase-js'
+import {supabase} from '@/lib/supabase'
 // Get the Supabase URL and anon key from environment variables
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+// const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-// Initialize the Supabase client
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  throw new Error("Supabase URL or anonymous key is not defined.")
-}
+// // Initialize the Supabase client
+// if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+//   throw new Error("Supabase URL or anonymous key is not defined.")
+// }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+// const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 const sampleCourses: Course[] = [
   {

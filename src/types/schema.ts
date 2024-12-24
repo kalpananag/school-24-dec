@@ -13,7 +13,7 @@ export interface Student {
   last_name: string
   email: string
   enrollment_date: string
-  courses: string[]
+  class: string
 }
 
 export interface Teacher {
