@@ -6,15 +6,6 @@ import { CrudTable, Column } from '@/components/crud-table'
 import { Student } from '@/types/schema'
 import DeleteConfirmationModal from '@/components/ui/deleteConfirmationModal'
 
-// const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-// const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-// if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-//   throw new Error("Supabase URL or anonymous key is not defined.")
-// }
-
-//const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
 // Sample student data with the updated interface
 const sampleStudents: Student[] = [
   {

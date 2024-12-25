@@ -43,6 +43,7 @@ export const insertParents = async (studentId: string, parentData: {
     ];
 
     // Insert parents data in bulk
+    console.log('parentsToInsert: ',parentsToInsert)
     const { data, error } = await supabase
       .from('parent') // Replace with your table name
       .upsert(parentsToInsert, { onConflict: 'student_id,relationship' }); // Ensure no duplicates based on student_id and relationship
@@ -69,11 +70,11 @@ export const getParents = async (
 
     // Create the parameters object
     const parameters = {
-      student_id: studentId // The studentId that links to the parents
+      p_student_id: studentId // The studentId that links to the parents
     };
 
     const { data, error } = await supabase.rpc(rpcName, parameters);
-
+    console.log(`data get: ${studentId}:`, data);
     if (error) {
       console.error(`Error fetching parents for student ${studentId}:`, error);
       return [];

@@ -5,6 +5,7 @@
       "@/*": ["src/*"]       // Resolve @/ to the src/ directory
 
     },
+    
     "target": "ES2017",
     "lib": [
       "dom",

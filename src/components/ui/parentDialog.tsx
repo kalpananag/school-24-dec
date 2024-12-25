@@ -4,42 +4,55 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { insertParents, getParents } from '@/lib/parent-operations'; // Import the functions
 import { Tooltip } from 'react-tooltip';
+import { toast } from 'react-toastify';  // Import only toast
+import 'react-toastify/dist/ReactToastify.css'; 
+import { showSuccessToast, showErrorToast } from '@/components/utils/toastUtils'
 
 // Define Parent form data structure
 interface ParentFormData {
   first_name: string;
   last_name: string;
-  email: string | null;  // email can be string or null
-  phone_number: string | null;  // phone_number can be string or null
-  relationship: string; // Ensure this is not nullable
+  email: string | null;
+  phone_number: string | null;
+  relationship: string;
 }
 
 interface Parent {
   parent_type: 'Father' | 'Mother' | 'Guardian';
   first_name: string;
   last_name: string;
-  email: string | null;  // email can be string or null
-  phone_number: string | null;  // phone_number can be string or null
-  relationship: string; // relationship should not be nullable
+  email: string | null;
+  phone_number: string | null;
+  relationship: string;
 }
 
-// Define ParentDialog props interface
 interface ParentDialogProps {
   open: boolean;
   onClose: () => void;
   studentId: string | null;
 }
 
+// Create a function that returns default parent data structure
+// Father: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Father' },
+// Mother: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Mother' },
+// Guardian: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Guardian' },
+
+const createDefaultParentFormData = (relationship: string): ParentFormData => ({
+  first_name: '',
+  last_name: '',
+  email: null,
+  phone_number: null,
+  relationship,
+});
+
 const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId }) => {
   const [selectedTab, setSelectedTab] = useState<'Father' | 'Mother' | 'Guardian'>('Father');
-  const [parentData, setParentData] = useState<{
-    Father: ParentFormData;
-    Mother: ParentFormData;
-    Guardian: ParentFormData;
-  }>({
-    Father: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Father' },
-    Mother: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Mother' },
-    Guardian: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Guardian' },
+  
+  // Use the function to initialize parentData state
+  const [parentData, setParentData] = useState({
+    Father: createDefaultParentFormData('Father'),
+    Mother: createDefaultParentFormData('Mother'),
+    Guardian: createDefaultParentFormData('Guardian'),
   });
 
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -49,28 +62,34 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
     if (studentId) {
       const fetchParents = async () => {
         const parents = await getParents(studentId);
-        if (parents && parents.length > 0) {
-          const newParentData: { [key in 'Father' | 'Mother' | 'Guardian']: ParentFormData } = {
-            Father: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Father' },
-            Mother: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Mother' },
-            Guardian: { first_name: '', last_name: '', email: null, phone_number: null, relationship: 'Guardian' },
+        console.log('inside parent dialog: ', parents);
+
+        // Reset the parentData if no data is found
+        if (!parents || parents.length === 0) {
+          setParentData({
+            Father: createDefaultParentFormData('Father'),
+            Mother: createDefaultParentFormData('Mother'),
+            Guardian: createDefaultParentFormData('Guardian'),
+          });
+        } else {
+          const newParentData = {
+            Father: createDefaultParentFormData('Father'),
+            Mother: createDefaultParentFormData('Mother'),
+            Guardian: createDefaultParentFormData('Guardian'),
           };
 
           parents.forEach((parent: Parent) => {
-            const parentType = parent.parent_type as 'Father' | 'Mother' | 'Guardian';
-          
+            const parentType = parent.relationship as 'Father' | 'Mother' | 'Guardian';
             if (parentType in newParentData) {
               newParentData[parentType] = {
                 first_name: parent.first_name || '',
                 last_name: parent.last_name || '',
-                // Ensure email and phone_number are treated as string or null
-                email: parent.email !== undefined && parent.email !== null ? parent.email : null,
-                phone_number: parent.phone_number !== undefined && parent.phone_number !== null ? parent.phone_number : null,
+                email: parent.email || null,
+                phone_number: parent.phone_number || null,
                 relationship: parent.relationship || parentType,
               };
             }
           });
-          
           setParentData(newParentData);
         }
       };
@@ -83,7 +102,7 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
     const { name, value } = e.target;
 
     if (name === 'email') {
-      if (value === '' || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
+      if (value === '' || /^[a-zA-Z0-9._%+-]+@[a-zAZ0-9.-]+\.[a-zA-Z]{2,}$/.test(value)) {
         setEmailError(null);
       } else {
         setEmailError('Please enter a valid email address');
@@ -112,7 +131,7 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
     e.preventDefault();
 
     if (!studentId) {
-      alert('Student ID is required to save the parent data.');
+      toast.error('Student ID is required to save the parent data.')
       return;
     }
 
@@ -124,11 +143,11 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
 
     try {
       await insertParents(studentId, parentDataToSave);
-      console.log(`All parent data saved successfully for student ${studentId}`);
+      showSuccessToast('All parent/guardian information saved successfully for student');
       onClose();
     } catch (error) {
       console.error('Error saving parent data:', error);
-      alert('Failed to save parent data.');
+      showErrorToast('Failed to save parent data. Please try again.');
     }
   };
 
@@ -186,7 +205,7 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
               Cancel
             </Button>
             <Button type="submit" disabled={!!emailError || !!phoneError}>
-              Save Parent
+              Save Parent/Guardian
             </Button>
           </div>
         </form>
