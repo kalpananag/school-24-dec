@@ -209,59 +209,65 @@ export function CrudTable<T extends { id: string }>({
             </DialogHeader>
             <form className="space-y-4">
             {columns.map((column) => (
-  <div key={String(column.key)} className="space-y-2">
-    {column.key === 'enrollment_date' ? (
-      <input
-        type="datetime-local"
-        placeholder={column.label}
-        value={(() => {
-          const value = formData[column.key as keyof T];
-          if (typeof value === 'string') {
-            return formatDatetimeForInput(value);
-          } else {
-            return '';
-          }
-        })()}
-        onChange={(e) =>
-          setFormData({ ...formData, [column.key]: e.target.value })
-        }
-        className="w-full p-2 border rounded"
-      />
-    ) : column.key === 'department' && entityType === 'staff' ? (
-      departments.length === 0 ? (
-        <p>Loading departments...</p>
-      ) : (
-        <select
-          value={handleValue(column, formData[column.key as keyof T]) || ''} // Use handleValue to return a valid value type
-          onChange={(e) =>
-            setFormData({ ...formData, [column.key]: e.target.value })
-          }
-          className="w-full p-2 border rounded"
-        >
-          <option value="" disabled>
-            Select Department
-          </option>
-          {departments.map((dept) => (
-            <option key={dept.id} value={dept.id}>
-              {dept.name}
-            </option>
-          ))}
-        </select>
-      )
-    ) : (
-      <Input
-        placeholder={column.label}
-        value={handleValue(column, formData[column.key as keyof T]) || ''}
-        onChange={(e) =>
-          setFormData({ ...formData, [column.key]: e.target.value })
-        }
-      />
-    )}
-    {errors[column.key as string] && (
-      <p className="text-red-500 text-sm">{errors[column.key as string]}</p>
-    )}
-  </div>
-))}
+              <div key={String(column.key)} className="space-y-2">
+                {column.key === 'enrollment_date' ? (
+                  <input
+                    type="datetime-local"
+                    placeholder={column.label}
+                    value={(() => {
+                      const value = formData[column.key as keyof T];
+                      if (typeof value === 'string') {
+                        return formatDatetimeForInput(value);
+                      } else {
+                        return '';
+                      }
+                    })()}
+                    onChange={(e) =>
+                      setFormData({ ...formData, [column.key]: e.target.value })
+                    }
+                    className="w-full p-2 border rounded"
+                  />
+                ) : column.key === 'department_id' && entityType === 'staff' ? (
+                  departments.length === 0 ? (
+                    <p>Loading departments...</p>
+                  ) : (
+                    <select
+                      value={handleValue(column, formData[column.key as keyof T]) || ''} // Use handleValue to return a valid value type
+                      onChange={(e) =>
+                        setFormData({ ...formData, [column.key]: e.target.value })
+                      }
+                      className="w-full p-2 border rounded"
+                      
+                    >
+                      <option value="" disabled>
+                        Select Department
+                      </option>
+                      {departments.map((dept) => (
+                        <option key={dept.id} value={dept.id} >
+                          {dept.name}
+                        </option>
+                      ))}
+                    </select>
+                  )
+                  ): column.key === 'department' ? ( // New column input
+                    <input
+                      type="text"
+                      hidden
+                    />
+                  ) : (
+                  <Input
+                    placeholder={column.label}
+                    value={handleValue(column, formData[column.key as keyof T]) || ''}
+                    onChange={(e) =>
+                      setFormData({ ...formData, [column.key]: e.target.value })
+                    }
+                  />
+                )}
+                {errors[column.key as string] && (
+                  <p className="text-red-500 text-sm">{errors[column.key as string]}</p>
+                )}
+              </div>
+            ))}
 
               <Button type="button" onClick={handleFormSubmit}>Save</Button>
             </form>
@@ -273,7 +279,9 @@ export function CrudTable<T extends { id: string }>({
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((column) => (
+            {columns
+              .filter(column =>column.key !== 'department_id') //hide department_id in header
+              .map((column) => (
               <TableHead key={String(column.key)}>{column.label}</TableHead>
             ))}
             <TableHead>Actions</TableHead>
@@ -282,7 +290,9 @@ export function CrudTable<T extends { id: string }>({
         <TableBody>
           {data.map((item) => (
             <TableRow key={item.id}>
-              {columns.map((column) => (
+              {columns
+                .filter(column => column.key !== 'department_id') // Hide the department_id column in the body
+                .map((column) => (
                 <TableCell key={String(column.key)}>{handleValue(column, item[column.key])}</TableCell>
               ))}
               <TableCell>

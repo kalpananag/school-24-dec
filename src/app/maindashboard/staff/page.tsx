@@ -69,9 +69,11 @@ export default function StaffPage() {
       setLoadingAction('');
     }
   }
-
+  interface ColumnWithStyle<T> extends Column<T> {
+    style?: React.CSSProperties; // Add style property
+  }
   // Columns definition for staff table
-  const columns: Column<Staff>[] = [
+  const columns: ColumnWithStyle<Staff>[] = [
     { key: 'first_name', label: 'First Name', required: true },
     { key: 'last_name', label: 'Last Name', required: true },
     { key: 'email', label: 'Email', required: true },
@@ -79,12 +81,19 @@ export default function StaffPage() {
     {
       key: 'department',
       label: 'Department',
-      required: true,
+      required: false,
       render: (value) => value || 'Unknown',
       // render: (value) => {
       //   const department = departments.find((d) => d.id === value);
       //   return department ? department.name : 'Unknown';
       // },
+    },
+    {
+      key: 'department_id',
+      label: 'Department ID',
+      required: true, // Not required since it's hidden
+      render: () => "", // Return an empty string instead of null
+      style: { display: 'none' }, // Optionally hide the column
     },
   ];
 
