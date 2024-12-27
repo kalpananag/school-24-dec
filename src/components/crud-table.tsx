@@ -377,6 +377,33 @@ export function CrudTable<T extends { id: string }>({
                   }
                   className="w-full p-2 border rounded"
                 />
+                ): column.key === 'department_id' && entityType === 'staff' ? (
+                  departments.length === 0 ? (
+                    <p>Loading departments...</p>
+                  ) : (
+                    <select
+                      value={handleValue(column, formData[column.key as keyof T]) || ''} // Use handleValue to return a valid value type
+                      onChange={(e) =>
+                        setFormData({ ...formData, [column.key]: e.target.value })
+                      }
+                      className="w-full p-2 border rounded"
+                      
+                    >
+                      <option value="" disabled>
+                        Select Department
+                      </option>
+                      {departments.map((dept) => (
+                        <option key={dept.id} value={dept.id} >
+                          {dept.name}
+                        </option>
+                      ))}
+                    </select>
+                  )
+                  ): column.key === 'department' ? ( // New column input
+                    <input
+                      type="text"
+                      hidden
+                    />
                 
                 ) : (
                   <Input
