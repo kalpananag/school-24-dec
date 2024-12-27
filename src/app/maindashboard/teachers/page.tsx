@@ -5,15 +5,8 @@ import { supabase } from '@/lib/supabase'
 import { CrudTable, Column } from '@/components/crud-table'
 import { Teacher } from '@/types/schema'
 import DeleteConfirmationModal from '@/components/ui/deleteConfirmationModal'
-
-// const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
-// const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-// if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-//   throw new Error("Supabase URL or anonymous key is not defined.")
-// }
-
-// const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+import { ToastContainer } from 'react-toastify';
+import { showSuccessToast, showErrorToast } from '@/components/utils/toastUtils'
 
 const sampleTeachers: Teacher[] = [
   {
@@ -76,10 +69,10 @@ export default function TeachersPage() {
   }
 
   const columns: Column<Teacher>[] = [
-    { key: 'first_name', label: 'First Name' },
-    { key: 'last_name', label: 'Last Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'department', label: 'Department' },
+    { key: 'first_name', label: 'First Name',  required:true}, 
+    { key: 'last_name', label: 'Last Name' , required:true},
+    { key: 'email', label: 'Email' , required:true},
+    { key: 'department', label: 'Department' , required:true},
   ]
 
   async function handleAdd(teacher: Partial<Teacher>) {
@@ -93,9 +86,11 @@ export default function TeachersPage() {
           p_email: teacher.email,
           p_department: teacher.department
         })
+        showSuccessToast('New Teacher information added successfully.');  
       if (error) throw error
       loadTeachers()
     } catch (error) {
+      showErrorToast('Error adding teacher');
       console.error('Error adding teacher:', error)
       setTeachers([...teachers, {
         ...teacher,
@@ -120,8 +115,10 @@ export default function TeachersPage() {
           p_department: teacher.department
         })
       if (error) throw error
+      showSuccessToast('Teacher information updated successfully');
       loadTeachers()
     } catch (error) {
+      showErrorToast('Error editing teacher');
       console.error('Error editing teacher:', error)
       setTeachers(teachers.map(t => t.id === id ? { ...t, ...teacher } : t))
     } finally {
@@ -224,6 +221,7 @@ export default function TeachersPage() {
         onCancel={() => setShowDeleteConfirm(false)}
         message="You are about to delete this teacher record. This action cannot be undone."
       />
+      {/* <ToastContainer position="top-center" autoClose={3000} /> */}
     </div>
   )
 }

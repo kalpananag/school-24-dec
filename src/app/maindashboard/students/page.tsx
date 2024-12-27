@@ -5,7 +5,10 @@ import { supabase }  from '@/lib/supabase'
 import { CrudTable, Column } from '@/components/crud-table'
 import { Student } from '@/types/schema'
 import DeleteConfirmationModal from '@/components/ui/deleteConfirmationModal'
-
+//import { toast } from 'react-toastify';  // Import only toast
+//import 'react-toastify/dist/ReactToastify.css'; 
+import { ToastContainer } from 'react-toastify';
+import { showSuccessToast, showErrorToast } from '@/components/utils/toastUtils'
 // Sample student data with the updated interface
 const sampleStudents: Student[] = [
   {
@@ -99,6 +102,7 @@ export default function StudentsPage() {
   async function handleAdd(student: Partial<Student>) {
     setLoading(true)
     setLoadingAction('adding')
+    console.log('Starting student....')
     if(!student.enrollment_date){
       const now = new Date();
       const formattedDate = now.toISOString().slice(0,16)//formatDateToPostgres(now);
@@ -122,9 +126,11 @@ export default function StudentsPage() {
             p_enrollment_date: student.enrollment_date,
             p_class: student.class
           })
+          showSuccessToast('Information saved successfully for student');
       if (error) throw error
       loadStudents()
     } catch (error) {
+      showErrorToast('Error adding student...');
       console.error('Error adding student:', error)
       setStudents([...students, {
         ...student,
@@ -151,9 +157,12 @@ export default function StudentsPage() {
           p_enrollment_date: student.enrollment_date,
           p_class: student.class
         })
+
+      showSuccessToast('Information updated successfully for student');  
       if (error) throw error
       loadStudents()
     } catch (error) {
+      showErrorToast('Error editing student...');
       console.error('Error editing student:', error)
       setStudents(students.map(s => s.id === id ? { ...s, ...student } : s))
     } finally {
@@ -259,6 +268,7 @@ export default function StudentsPage() {
         onCancel={() => setShowDeleteConfirm(false)}
         message="You are about to delete this student record. This action cannot be undone."
       />
+       {/* <ToastContainer position="top-center" autoClose={3000} /> */}
     </div>
   )
 }

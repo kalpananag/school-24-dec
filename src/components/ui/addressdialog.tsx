@@ -9,6 +9,9 @@ import {
   getAddresses,
 } from '@/lib/address-operations'; // Update function names for generalized address operations
 import {Tooltip} from 'react-tooltip';
+//import { toast } from 'react-toastify';  // Import only toast
+//import 'react-toastify/dist/ReactToastify.css'; 
+import { showSuccessToast, showErrorToast } from '@/components/utils/toastUtils'
 // Define the AddressFormData type for the form input fields
 interface AddressFormData {
   street: string;
@@ -122,16 +125,18 @@ const AddressDialog: React.FC<AddressDialogProps> = ({ open, onClose, itemId, en
 
     try {
       const addressToSave = addressData[selectedTab];
-      console.log('Address data to save:', addressToSave);
+      //console.log('Address data to save:', addressToSave);
       await insertAddress(itemId, entityType,addressToSave, selectedTab); // Save based on entity type
       console.log(`Address saved successfully for ${entityType} ${itemId}`); 
       //alert(`Address saved successfully for ${entityType} ${itemId}`);
-      const message = `Address saved successfully for ${entityType} ${itemId}`;
-      <SuccessMessage message={message} /> 
+      const message = `Address saved successfully for ${entityType}`;
+      showSuccessToast(message);
       onClose();
     } catch (error) {
-      console.error('Error saving address:', error);
-      alert('Failed to save address.');
+      const message = 'Error saving address:'
+      console.error(message, error);
+      showErrorToast(message)
+      //alert('Failed to save address.');
     }
   };
 

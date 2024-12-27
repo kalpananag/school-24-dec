@@ -25,14 +25,21 @@ export interface Teacher {
   
   }
 
-export interface Staff {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
-  role: string
-  department: string
-}
+  // Define the Department type
+  export interface Department {
+    id: string;
+    name: string;
+  }
+  
+  export interface Staff {
+    id: string
+    first_name: string
+    last_name: string
+    email: string
+    role: string
+    department: string // or you can change it to department_name if you want to keep it
+    department_id: string // Add department_id to reference the department table
+  }
 
 export interface Address {
   street: string;

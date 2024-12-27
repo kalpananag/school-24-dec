@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { insertParents, getParents } from '@/lib/parent-operations'; // Import the functions
 import { Tooltip } from 'react-tooltip';
-import { toast } from 'react-toastify';  // Import only toast
-import 'react-toastify/dist/ReactToastify.css'; 
+//import { toast } from 'react-toastify';  // Import only toast
+//import 'react-toastify/dist/ReactToastify.css'; 
 import { showSuccessToast, showErrorToast } from '@/components/utils/toastUtils'
 
 // Define Parent form data structure
@@ -131,7 +131,7 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
     e.preventDefault();
 
     if (!studentId) {
-      toast.error('Student ID is required to save the parent data.')
+      showErrorToast('Student ID is required to save the parent data.')
       return;
     }
 
@@ -155,7 +155,7 @@ const ParentDialog: React.FC<ParentDialogProps> = ({ open, onClose, studentId })
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Manage Parent for Student</DialogTitle>
+          <DialogTitle>Manage Parent information for Student</DialogTitle>
         </DialogHeader>
         <div className="tabs">
           <div className="flex space-x-4 mb-4">

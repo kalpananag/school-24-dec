@@ -73,7 +73,8 @@
     position: relative;
     z-index: 1; /* Ensure content is on top of the background */
   }
-  
+  /* Ensure the Tooltip has a high enough z-index */
+
   
 }
 /* This class applies the background GIF for the entire page */

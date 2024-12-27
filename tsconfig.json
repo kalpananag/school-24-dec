@@ -5,7 +5,8 @@
       "@/*": ["src/*"]       // Resolve @/ to the src/ directory
 
     },
-    
+    "typeRoots": ["node_modules/@types"],
+    "types": ["react", "react-dom", "react-tooltip"],
     "target": "ES2017",
     "lib": [
       "dom",

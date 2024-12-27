@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react'
 import { Course } from '@/types/schema'
 import { CrudTable, Column } from '@/components/crud-table'
+import DeleteConfirmationModal from '@/components/ui/deleteConfirmationModal'
 //import { createClient } from '@supabase/supabase-js'
 import {supabase} from '@/lib/supabase'
+//import { ToastContainer } from 'react-toastify';
+import { showSuccessToast, showErrorToast } from '@/components/utils/toastUtils'
 // Get the Supabase URL and anon key from environment variables
 // const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 // const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -47,7 +50,8 @@ export default function CoursesPage() {
   const [loading, setLoading] = useState<boolean>(false); // Loading state for operations
   const [loadingAction, setLoadingAction] = useState<string>(''); // Track which action is loading
   const [totalCourses, setTotalCourses] = useState<number>(0); // Total courses for pagination
-
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false)
+  const [courseToDelete, setCourseToDelete] = useState<string | null>(null)
   const itemsPerPage = 10; // Number of items per page
 
   useEffect(() => {
@@ -80,9 +84,9 @@ export default function CoursesPage() {
 
   // Define columns for the CrudTable
   const columns: Column<Course>[] = [
-    { key: 'name', label: 'Course Name' },
-    { key: 'description', label: 'Description' },
-    { key: 'credits', label: 'Credits' },
+    { key: 'name', label: 'Course Name' , required:true},
+    { key: 'description', label: 'Description' , required:true},
+    { key: 'credits', label: 'Credits' , required:true},
   ]
 
   // Handle adding a new course
@@ -95,8 +99,12 @@ export default function CoursesPage() {
         .insert([course])
         .select()
       if (error) throw error
-      if (data) loadCourses()
+      if (data) {
+        showSuccessToast('Course added into system');
+        loadCourses()
+      }
     } catch (error) {
+      showErrorToast('Error adding course');
       console.error('Error adding course:', error)
       setCourses([...courses, { ...course, id: Date.now().toString(), created_at: new Date().toISOString() } as Course])
     } finally {
@@ -115,8 +123,10 @@ export default function CoursesPage() {
         .update(course)
         .eq('id', id)
       if (error) throw error
+      showSuccessToast('Course updated into system');
       loadCourses()
     } catch (error) {
+      showErrorToast('Error editing course');
       console.error('Error editing course:', error)
       setCourses(courses.map(c => c.id === id ? { ...c, ...course } : c))
     } finally {
@@ -124,24 +134,33 @@ export default function CoursesPage() {
       setLoadingAction('');
     }
   }
+  async function handleDeleteClick(id: string) {
+    setCourseToDelete(id)
+    setShowDeleteConfirm(true)
+  }
 
   // Handle deleting a course
-  async function handleDelete(id: string) {
-    setLoading(true);
-    setLoadingAction('deleting'); // Set action as deleting
-    try {
-      const { error } = await supabase
-        .from('course')
-        .delete()
-        .eq('id', id)
-      if (error) throw error
-      loadCourses()
-    } catch (error) {
-      console.error('Error deleting course:', error)
-      setCourses(courses.filter(c => c.id !== id))
-    } finally {
-      setLoading(false);
-      setLoadingAction('');
+  async function handleDelete() {
+    if(courseToDelete){
+
+    
+      setLoading(true);
+      setLoadingAction('deleting'); // Set action as deleting
+      try {
+        const { error } = await supabase
+          .from('course')
+          .delete()
+          .eq('id', courseToDelete)
+        if (error) throw error
+        loadCourses()
+      } catch (error) {
+        console.error('Error deleting course:', error)
+        setCourses(courses.filter(c => c.id !== courseToDelete))
+      } finally {
+        setLoading(false);
+        setLoadingAction('');
+        setShowDeleteConfirm(false)
+      }
     }
   }
 
@@ -184,10 +203,11 @@ export default function CoursesPage() {
             columns={columns}
             onAdd={handleAdd}
             onEdit={handleEdit}
-            onDelete={handleDelete}
+            onDelete={handleDeleteClick}
             addTitle="Add New Course"  //{/* Title for Add dialog */}
             editTitle="Update Course"  //{/* Title for Edit dialog */}
             entityType="course"  // Set entityType as "teacher" for TeacherPage
+            
           />
         </div>
 
@@ -212,6 +232,14 @@ export default function CoursesPage() {
           </button>
         </div>
       </div>
+      {/* <ToastContainer position="top-center" autoClose={3000} /> */}
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteConfirm}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+        message="You are about to delete this teacher record. This action cannot be undone."
+      />
     </div>
   )
 }
